@@ -1,7 +1,8 @@
    jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
    
    Typical usage example:
-      var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
+      var uri = $.uri(window.location.href); 
+         // Assuming current url is "http://api.jquery.com"
       
       // Manipulate the URI
       uri.port = "8080";
