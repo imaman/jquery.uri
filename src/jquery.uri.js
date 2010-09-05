@@ -24,14 +24,15 @@ THE SOFTWARE.
 
 
 /**
-   jquery.uri(uriString) - Inspect and manipulate a URI.
+   jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
    
-   Typical usage: 
+   Typical usage example:
       var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
       uri.params.format = "xml";
       window.location.replace(uri.toString()); // Will forward the browser to "http://api.jquery.com?format=xml"
-   
-   Returns an object, containing the following properties and methods:
+
+   Parameters: uriString - Input string
+   Returnss: an object, containing the following properties and methods:
      
    - protocol : String
       If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then protocol is 'http'
@@ -139,31 +140,13 @@ THE SOFTWARE.
       
       return { 
          
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then protocol is 'http'
-         protocol : protocolDomainPortPath.protocol, 
-         
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then domain is 'api.jquery.com'
-         domain : domainPort.domain,
-         
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then port is '8080'
-         port : domainPort.port,
-         
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then path is 'category/core'
-         path : domainPortPath.path,
-         
-         // The parameters specified at the URL as a map (parameter name -> parameter value). Names and values are decoded
-         // via decodeURIComponent().
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then params == { "format": "json" }
+         protocol : protocolDomainPortPath.protocol,          
+         domain : domainPort.domain,      
+         port : domainPort.port,         
+         path : domainPortPath.path,         
          params: extractParams(queryFragment.query), 
-
-         // If originating URL is 'http://api.jquery.com:8080/category/core?format=json#sec3'  then fragment is 'sec3'
          fragment : queryFragment.fragment,
-
-         // Return a well-formed URL representing this object.
-         // Unspecified components (e.g, if this.port == '') do not appear at the result.
-         // Caller can pass a compareFunction to affect the order of the query part at the result ('?p1=v1&p2=v2'). This function takes 
-         // two arguments, a and b, each of which is an object of the form { key: k, value: v } representing the name and value of a param from this.params.
-         // the function should return -1 if a should appear before b, +1 if a should appear after b, or 0 otherwise.
+         
          toString: function(compareFunction) {
 
       
@@ -184,11 +167,8 @@ THE SOFTWARE.
             
             return surround("", this.protocol, "://") + surround("", this.domain) 
                + surround(":", this.port) + surround("/", this.path) + surround("?", q);
-         },
+         },         
          
-         // Return a new instance identical to this. All fields in the new instance have the same values as in this, 
-         // except for params which points at a fresh map, populated with the exact key,value mappings as in this.params.
-         // This allows client code to synthesize a new URL from an existing URL without affecting the existing one.
          clone: function() {
             var result = $.extend({}, this);
             result.params = $.extend({}, this.params);

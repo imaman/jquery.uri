@@ -1,0 +1,41 @@
+   jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
+   
+   Typical usage example:
+      var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
+      uri.params.format = "xml";
+      window.location.replace(uri.toString()); // Will forward the browser to "http://api.jquery.com?format=xml"
+
+   Parameters: uriString - Input string
+   Returnss: an object, containing the following properties and methods:
+     
+   - protocol : String
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then protocol is 'http'
+            
+   - domain : String
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then domain is 'api.jquery.com'
+            
+   - port : String
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then port is '8080'
+            
+   - path : String
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then path is 'category/core'
+            
+   - params : Object
+      The parameters specified at the URL as a map (parameter name -> parameter value). Names and values are decoded
+      via decodeURIComponent().
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then params == { "format": "json" }
+
+   - fragment : String
+      If originating URL is 'http://api.jquery.com:8080/category/core?format=json#sec3'  then fragment is 'sec3'
+         
+   - toString(compareFunction)
+      Return a well-formed URL representing this object.
+      Unspecified components (e.g, if this.port == '') do not appear at the result.
+      Caller can pass a compareFunction to affect the order of the query part at the result ('?p1=v1&p2=v2'). This function takes 
+      two arguments, a and b, each of which is an object of the form { key: k, value: v } representing the name and value of a param from this.params.
+      the function should return -1 if a should appear before b, +1 if a should appear after b, or 0 otherwise.
+         
+   - clone() 
+      Return a new instance identical to this. All fields in the new instance have the same values as in this, 
+      except for params which points at a fresh map, populated with the exact key,value mappings as in this.params.
+      This allows client code to synthesize a new URL from an existing URL without affecting the existing one.
