@@ -1,10 +1,9 @@
    jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
    
-   Typical usage example:
+   Typical usage example (assuming current url is "http://api.jquery.com"):
+   
       var uri = $.uri(window.location.href); 
-         // Assuming current url is "http://api.jquery.com"
       
-      // Manipulate the URI
       uri.port = "8080";
       uri.path = "docs/index.html";
       uri.params.format = "xml";
@@ -14,7 +13,7 @@
          // "http://api.jquery.com:8080/docs/index.html?format=xml"
 
    Parameters: uriString - Input string
-   Returnss: an object, containing the following properties and methods:
+   Returns: an object, containing the following properties and methods:
      
    - protocol : String
       If originating URL is 'http://api.jquery.com:8080/category/index.html?format=json' 
