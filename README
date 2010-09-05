@@ -2,8 +2,15 @@
    
    Typical usage example:
       var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
+      
+      // Manipulate the URI
+      uri.port = "8080";
+      uri.path = "docs/index.html";
       uri.params.format = "xml";
-      window.location.replace(uri.toString()); // Will forward the browser to "http://api.jquery.com?format=xml"
+      
+      window.location.replace(uri.toString()); 
+         // Will forward the browser to:
+         // "http://api.jquery.com:8080/docs/index.html?format=xml"
 
    Parameters: uriString - Input string
    Returnss: an object, containing the following properties and methods:
