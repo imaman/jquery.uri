@@ -38,22 +38,22 @@ THE SOFTWARE.
    Returns: an immutable object, containing the following properties and methods:
      
    - at: function(partString) 
-       Returns the value of the specified URI part. partString can be one 
-       of the following strings: "protocol", "domain", "port", "path", "query". 
-       Any other value yields an exception. 
+      Returns the value of the specified URI part. partString can be one 
+      of the following strings: "protocol", "domain", "port", "path", "query". 
+      Any other value yields an exception. 
        
-       The "query" part returns an object that maps parameter names to their values,
-       as specified by at the query part of the URI. Both names and values are 
-       decoded via decodeURIComponent().
-      
-       Example:       
-         var uri = $.uri('http://jquery.com:8080/main/index.html?format=json#top');
-         assert uri.at('protocol') == 'http'
-         assert uri.at('domain') == 'jquery.com'
-         assert uri.at('port') == '8080'
-         assert uri.at('path') == 'main/index.html'
-         assert uri.at('query') == { 'format': 'json' }
-         assert uri.at('fragment') == 'top'
+      The "query" part returns an object that maps parameter names to their values,
+      as specified by at the query part of the URI. Both names and values are 
+      decoded via decodeURIComponent().
+
+   Example:       
+      var uri = $.uri('http://jquery.com:8080/main/index.html?format=json#top');
+      assert uri.at('protocol') == 'http'
+      assert uri.at('domain') == 'jquery.com'
+      assert uri.at('port') == '8080'
+      assert uri.at('path') == 'main/index.html'
+      assert uri.at('query') == { 'format': 'json' }
+      assert uri.at('fragment') == 'top'
           
    - at: function(partString, value)
       Returns a new instance, similar to this one, except that the specified URI 
@@ -62,10 +62,10 @@ THE SOFTWARE.
       "query". Any other value will yields an exception. 
         
       Example:       
-        var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
-        uri = uri.at('port', '2020').at('path', 'welcome.html');
-        assert uri.at('port') == '2020'
-        assert uri.at('path') == 'welcome.html'
+         var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
+         uri = uri.at('port', '2020').at('path', 'welcome.html');
+         assert uri.at('port') == '2020'
+         assert uri.at('path') == 'welcome.html'
        
       if part == "query" then value should be an object. Properties of these object
       will provide new name,value mapping for the "query" part at the returned object.
@@ -94,11 +94,11 @@ THE SOFTWARE.
       as if .at("query", object.query) is called.
 
       Example:       
-          var uri = $.uri('http://api.jquery.com?a=1&b=2');
-          uri = uri.at({ query: { b:200, c:300 }});
-          assert uri.at('query').a == 1;
-          assert uri.at('query').b == 200;
-          assert uri.at('query').c == 300;
+         var uri = $.uri('http://api.jquery.com?a=1&b=2');
+         uri = uri.at({ query: { b:200, c:300 }});
+         assert uri.at('query').a == 1;
+         assert uri.at('query').b == 200;
+         assert uri.at('query').c == 300;
 
    - toString(compareFunction)
       Return a well-formed URL representing this object.
@@ -132,11 +132,11 @@ THE SOFTWARE.
       parameter is already defined. The receiving object is unchanged.
       
       Example:       
-          var uri = $.uri("http://api.jquery.com?a=1&b=2");
-          uri = uri.at({ query: { b:200, c:300 }});
-          assert uri.at('query').a == 1;
-          assert uri.at('query').b == 2;
-          assert uri.at('query').c == 300;
+         var uri = $.uri("http://api.jquery.com?a=1&b=2");
+         uri = uri.at({ query: { b:200, c:300 }});
+         assert uri.at('query').a == 1;
+         assert uri.at('query').b == 2;
+         assert uri.at('query').c == 300;
        
                 
 */
