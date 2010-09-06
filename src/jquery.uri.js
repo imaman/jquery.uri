@@ -67,7 +67,7 @@ THE SOFTWARE.
       This allows client code to synthesize a new URL from an existing URL without affecting the existing one.
 */
 (function ($) {
-   $.uri = function(line) {
+   $._uri = function(line) {
       
       line = line.toString();
       var splitAround = function(s, left, separator, right) {
@@ -177,18 +177,57 @@ THE SOFTWARE.
       };         
    }
    
-   $.uri_ = function(x) {
-      var result = $.uri(x);
-      result.at = function(part) {
-         var arr = $.grep(["domain", "port", "path", "protocol", "fragment"], function(s) {
-            return part == s; 
-         });
+   function set(obj, part, value) {
+      checkLegalPart(part);
+      var temp = obj.clone();
+      temp[part] = value;
+      return build(temp);
+   }
+   
+   function setOptions(obj, options) {
+      var res = obj;
+      $.each(options, function(key, value) {
+         res = res.at(key, value);
+         return true;
+      });
+      
+      return res;     
+   }
+
+   
+   function checkLegalPart(part) {
+      var parts = ["protocol", "domain", "port", "path", "query", "fragment"];
+      if($.inArray(part, parts) == -1) 
+         throw "Unknown URI part '" + part + "'";
+   }
+   
+   function get(obj, part) {
+      checkLegalPart(part);               
+      if(part == "query")
+         return $.extend({}, obj.params);
+      
+      return obj[part] 
+   }
+   
+   function build(xUri) {
+      xUri.at = function(part, value) {
+      
+         if(arguments.length == 2) 
+            return set(xUri, part, value);
          
-         if(arr.length == 0)
-            throw "Unknown URI part '" + part + "'"; 
-         return result[part] 
+         if($.isPlainObject(part)) 
+            return setOptions(xUri, part);
+         
+         return get(xUri, part);
       }
-      return result;   	 
+      
+      return xUri;     
+   }
+   
+   $.uri = function(x) {
+      return build($._uri(x));
+      
    } 
 })(jQuery);
+
 

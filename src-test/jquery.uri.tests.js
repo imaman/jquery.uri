@@ -1,37 +1,89 @@
 JqueryUriTests = TestCase("jquery.uri.tests");
 
-
-JqueryUriTests.prototype.testDomainDoesNotIncludeProtocol = function() {
-   assertEquals("only.the.domain", $.uri("protocol://only.the.domain").domain);
+JqueryUriTests.prototype.testProtocolGet = function() {
+   assertEquals("protocol", 
+      $.uri("protocol://domain").at("protocol"));
 };
 
-JqueryUriTests.prototype.testProtocolImmutable = function() {
-   assertEquals("protocol", $.uri_("protocol://domain").at("protocol"));
+JqueryUriTests.prototype.testProtocolSet = function() {
+   assertEquals("new.protocol", 
+      $.uri("old.protocol://domain").at("protocol", "new.protocol").at("protocol"));      
 };
 
-JqueryUriTests.prototype.testDomainDoesNotIncludeProtocolImmutable = function() {
+JqueryUriTests.prototype.testDomainGet = function() {
    assertEquals("only.the.domain", 
-      $.uri_("protocol://only.the.domain").at("domain"));
+      $.uri("protocol://only.the.domain").at("domain"));
 };
 
-JqueryUriTests.prototype.testPortImmutable = function() {
-   assertEquals("2020", $.uri_("protocol://domain:2020").at("port"));
+JqueryUriTests.prototype.testDomainSet = function() {
+   assertEquals("new.domain", 
+      $.uri("protocol://old.domain").at("domain", "new.domain").at("domain"));
 };
 
-JqueryUriTests.prototype.testPathImmutable = function() {
+JqueryUriTests.prototype.testAtHasNoSideEffects = function() {
+   var orig = $.uri("protocol://old.domain");
+   orig.at("domain", "new.domain");
+   assertEquals("old.domain", orig.at("domain"));
+};
+
+JqueryUriTests.prototype.testPortGet = function() {
+   assertEquals("2020", $.uri("protocol://domain:2020").at("port"));
+};
+
+JqueryUriTests.prototype.testPortSet = function() {
+   assertEquals("4321", 
+      $.uri("protocol://domain:2020").at("port", "4321").at("port"));
+};
+
+JqueryUriTests.prototype.testPathGet = function() {
    assertEquals("this/is/the/path", 
-      $.uri_("protocol://domain/this/is/the/path").at("path"));
+      $.uri("protocol://domain/this/is/the/path").at("path"));
 };
 
-JqueryUriTests.prototype.testFragmentImmutable = function() {
-   assertEquals("there", $.uri_("protocol://domain#there").at("fragment"));
+JqueryUriTests.prototype.testPathSet = function() {
+   assertEquals("new/path", 
+      $.uri("protocol://domain/old/path").at("path", "new/path").at("path"));
 };
 
+JqueryUriTests.prototype.testQueryGet = function() {
+   assertEquals("one", 
+      $.uri("?first=one&second=two").at("query").first);
+};
 
-JqueryUriTests.prototype.testRejectsUnknownPartImmutable = function() {
+JqueryUriTests.prototype.testQueryIsDefensiveGetter = function() {
+
+	var uri = $.uri("?first=one&second=two");
+	uri.at("query").first = "100";
+   	assertEquals("one", uri.at("query").first);
+};
+
+JqueryUriTests.prototype.testFragmentGet = function() {
+   assertEquals("there", $.uri("protocol://domain#there").at("fragment"));
+};
+
+JqueryUriTests.prototype.testFragmentSet = function() {
+   assertEquals("new.fragment", 
+      $.uri("protocol://domain/old/path").at("fragment", "new.fragment").at("fragment"));
+};
+
+JqueryUriTests.prototype.testAtCanSetMultiplePartsViaOptions = function() {
+   var orig = $.uri("protocol://domain#old.fragment");
+   var mutated = orig.at({ fragment: "new.fragment", port: "9009" });
+   assertEquals("new.fragment", mutated.at("fragment"));
+   assertEquals("9009", mutated.at("port"));
+};
+
+JqueryUriTests.prototype.testAtWithOptionsHasNoSideEffects = function() {
+   var orig = $.uri("protocol://domain#old.fragment");
+   orig.at({ fragment: "new.fragment", port: "9009" });
+   assertEquals("old.fragment", orig.at("fragment"));
+   assertEquals("", orig.at("port"));
+};
+
+JqueryUriTests.prototype.testRejectsUnknownPartsAtGet = function() {
    var shouldComplainAbout = function(part) {
       try {
-         $.uri_("").at(part);
+         $.uri("").at(part);
       }
       catch(e) {
          return;
@@ -46,125 +98,22 @@ JqueryUriTests.prototype.testRejectsUnknownPartImmutable = function() {
    shouldComplainAbout("_fragment");   
 };
 
-
-JqueryUriTests.prototype.testSingleParam = function() {
-   assertEquals("b", $.uri("www.yahoo.com?a=b").params["a"]);
-   assertEquals("bc", $.uri("www.yahoo.com?a=bc").params["a"]);
-};
-
-JqueryUriTests.prototype.testTwoParams = function() {
-   var v = $.uri("www.yahoo.com?a=bc&d=ef").params;
-   assertEquals("bc", v["a"]);
-   assertEquals("ef", v["d"]);
-};
-
-JqueryUriTests.prototype.testParamValuesAreDecoded = function() {
-   assertEquals(" &?", $.uri("some.domain?a=%20%26%3f").params["a"]);
-};
-
-JqueryUriTests.prototype.testParamNamesAreDecoded = function() {
-   assertEquals("aValue", $.uri("some.domain?%20%26%3f=aValue").params[" &?"]);
-};
-
-JqueryUriTests.prototype.testSecondOverridesFirst = function() {
-   var v = $.uri("www.yahoo.com?a=bc&a=ef").params;
-   assertEquals("ef", v["a"]);
-};
-
-JqueryUriTests.prototype.testDomain = function() {
-   var loc = $.uri("www.yahoo.com?a=bc&a=ef");
-   assertEquals("www.yahoo.com", loc.domain);
-};
-
-
-JqueryUriTests.prototype.testDomainDoesNotIncludePath = function() {
-   var loc = $.uri("only.the.domain/path");
-   assertEquals("only.the.domain", loc.domain);
-};
-
-JqueryUriTests.prototype.testProtocol = function() {
-   assertEquals("http", $.uri("http://does.not.matter").protocol);
-   assertEquals("", $.uri("does.not.matter").protocol);
-};
-
-JqueryUriTests.prototype.testPort = function() {
-   assertEquals("9090", $.uri("does.not.matter:9090").port);
-   assertEquals("", $.uri("does.not.matter").port);
-};
-
-JqueryUriTests.prototype.testPath = function() {
-   assertEquals("", $.uri("does.not.matter").path);
-   assertEquals("a", $.uri("does.not.matter/a").path);
-   assertEquals("this/is/the/path", $.uri("does.not.matter/this/is/the/path").path);
-}
-
-JqueryUriTests.prototype.testPathDoesNotIncludeTrailingSlashes = function() {
-   assertEquals("no/trailing/slash", $.uri("does.not.matter/no/trailing/slash/").path);
-   assertEquals("no/trailing/slashes", $.uri("does.not.matter/no/trailing/slashes///").path);
-};
-
-JqueryUriTests.prototype.testPathWithNoDomain = function() {
-   assertEquals("just/the/path", $.uri("/just/the/path").path);
-   assertEquals("just/the/path", $.uri(":2020/just/the/path").path);
-};
-
-JqueryUriTests.prototype.testAnchor = function() {
-   assertEquals("fragment", $.uri("domain?ignore=me#fragment").fragment);
-   assertEquals("fragment", $.uri("domain?#fragment").fragment);
-   assertEquals("fragment", $.uri("domain#fragment").fragment);
-};
-
-JqueryUriTests.prototype.testToString = function() {
-   assertEquals("/just/the/path", $.uri("/just/the/path").toString());
-   assertEquals("protocol://host/path", $.uri("protocol://host/path").toString());
-   assertEquals("protocol://fully.qualified.hostname/a/four/part/path", 
-      $.uri("protocol://fully.qualified.hostname/a/four/part/path").toString());
-   assertEquals("protocol://host:port/path", $.uri("protocol://host:port/path").toString());
-   assertEquals("protocol://host?p1=abc", $.uri("protocol://host?p1=abc").toString());
-};
-
-
-JqueryUriTests.prototype.testToStringEncodesParameterValues = function() {
-   var loc = $.uri("");
-   loc.params = { "55": " &?" };
-      
-   assertEquals("?55=%20%26%3F", loc.toString().toUpperCase());
-};
-
-
-JqueryUriTests.prototype.testToStringEncodesParameterNames = function() {
-   var loc = $.uri("");
-   loc.params = { " &?": "VALUE" };
-      
-   assertEquals("?%20%26%3F=VALUE", loc.toString().toUpperCase());
-};
-
-JqueryUriTests.prototype.testToStringWithCustomOrderBasedOnKeys = function() {
-   var loc = $.uri("?2=b&3=c&1=a");
-   assertEquals("?1=a&2=b&3=c", loc.toString(function(lhs, rhs) {
-      return lhs.key - rhs.key;      
-   }));
-};
-
-JqueryUriTests.prototype.testToStringWithCustomOrderBasedOnValues = function() {
-   var loc = $.uri("?2=b&3=c&1=a");
-   assertEquals("?1=a&2=b&3=c", loc.toString(function(lhs, rhs) {
-      return lhs.value.charCodeAt(0) - rhs.value.charCodeAt(0);    
-   }));
-};
-
-JqueryUriTests.prototype.testClone = function() {
-   var src = $.uri("protcol://domain?1=a&2=b");
-   var copy = src.clone();
+JqueryUriTests.prototype.testRejectsUnknownPartsAtGet = function() {
+   var shouldComplainAbout = function(part) {
+      try {
+         $.uri("").at(part, "");
+      }
+      catch(e) {
+         return;
+      }
+      fail(part + " was accepted");   
+   }
    
-   copy.params[2] = 'BB';
-   copy.params[3] = 'c';
-   copy.port = 100;
-      
-   assertEquals("protcol://domain?1=a&2=b", 
-      src.toString(function(lhs, rhs) { return lhs.key - rhs.key }));
-      
-   assertEquals("protcol://domain:100?1=a&2=BB&3=c", 
-      copy.toString(function(lhs, rhs) { return lhs.key - rhs.key }));
+   shouldComplainAbout("protocol_");
+   shouldComplainAbout("domain_");
+   shouldComplainAbout("port_");
+   shouldComplainAbout("_path");
+   shouldComplainAbout("_fragment");   
 };
+
 

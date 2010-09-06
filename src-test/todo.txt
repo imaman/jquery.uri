@@ -1,0 +1,10 @@
+- new parsing logic
+- protocol ends with :
+- domain starts with //
+- path starts with /
+- testQuerySet - override 
+- testQuerySet - clear  
+- testQuerySet - default ?
+- options for query
+- multiple get via array?
+  
