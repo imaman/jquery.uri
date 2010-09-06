@@ -82,7 +82,8 @@
       Names and value of parameters at the query part are encoded via encodeURIComponent().
       
       Caller can pass an optional compareFunction to affect the order of parameters 
-      at the query part of the result. If compareFunction is not specified, order is undefined.
+      at the query part of the result. If compareFunction is not specified, order is 
+      undefined.
       
       parameter: compareFunction 
          A function taking two arguments, a and b, each of which 
