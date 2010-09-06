@@ -35,7 +35,7 @@ THE SOFTWARE.
          // Will forward the browser to "http://api.jquery.com/main/index.html?format=xml"
 
    Parameters: uriString - Input string
-   Returns: an immutable object, containing the following properties and methods:
+   Returns: an immutable object, providing the following methods:
      
    - at: function(partString) 
       Returns the value of the specified URI part. partString can be one 
@@ -129,11 +129,11 @@ THE SOFTWARE.
           var uri = $.uri('http://api.jquery.com?a=1&b=2');
           assert uri.resetQuery().at('query') == {}
           
-   - defaults(object) 
+   - defaults(anObject) 
       Provide defaults for query parameters.
-      Returns a new instance similar to this one except for new name,value mapping 
-      of query parameters that are specified by the given object. Such a mapping 
-      will be applied only if no existing parameter mapping is already defined.
+      Returns a new instance similar to this one except for new name,value mappings 
+      of query parameters that are specified by anObject. Such a mapping 
+      will be applied only if no existing parameter is already defined.
       The receiving object is unchanged.
         
       
