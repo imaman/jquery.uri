@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 
 /**
-   jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
+   jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI or a URL.
    
    Typical usage example:
       var uri = $.uri(window.location.href); 
@@ -56,7 +56,8 @@ THE SOFTWARE.
       assert uri.at('fragment') == 'top'
           
    - at: function(partString, value)
-      Returns a new instance, similar to this one, except that the specified URI 
+      Set the value of a URI part.
+      Returns a new instance similar to this one except that the specified URI 
       part is now set to value. The receiving object is unchanged. partString can 
       be one of the following strings: "protocol", "domain", "port", "path", 
       "query". Any other value yields an exception. 
@@ -80,7 +81,8 @@ THE SOFTWARE.
          assert uri.at('query').c == 300;
 
    - at: function(object)
-      Returns a new instance, similar to this one, except that all name,value 
+      Set the values of several URI parts and/or query parameters.      
+      Returns a new instance similar to this one except that all name,value 
       mappings specified by the parameter are applied the new instance 
       in a manner similar to at(name,value).  The receiving object is unchanged.
        
@@ -119,7 +121,8 @@ THE SOFTWARE.
             or 0 otherwise.
             
    - resetQuery() 
-      Returns a new instance, similar to this one, except that its query part 
+      Empty the query. 
+      Returns a new instance similar to this one except that its query part 
       is empty. The receiving object is unchanged.
             
       Example:       
@@ -127,12 +130,15 @@ THE SOFTWARE.
           assert uri.resetQuery().at('query') == {}
           
    - defaults(object) 
-      Returns a new instance, where properties of the parameter will provide 
-      new name,value mapping for the "query" part, unless a similarly named
-      parameter is already defined. The receiving object is unchanged.
+      Provide defaults for query parameters.
+      Returns a new instance similar to this one except for new name,value mapping 
+      of query parameters that are specified by the given object. Such a mapping 
+      will be applied only if no existing parameter mapping is already defined.
+      The receiving object is unchanged.
+        
       
       Example:       
-         var uri = $.uri("http://api.jquery.com?a=1&b=2");
+         var uri = $.uri('http://api.jquery.com?a=1&b=2');
          uri = uri.at({ query: { b:200, c:300 }});
          assert uri.at('query').a == 1;
          assert uri.at('query').b == 2;
