@@ -136,7 +136,8 @@ THE SOFTWARE.
                 
 */
 (function ($) {
-   $._uri = function(line) {
+   
+   function parse(line) {
       
       line = line.toString();
       var splitAround = function(s, left, separator, right) {
@@ -312,13 +313,16 @@ THE SOFTWARE.
             var temp = xUri.clone();
             temp.params = $.extend({}, options, temp.params);
             return build(temp);
+         },
+         
+         _raw: function() {
+            return xUri;
          }
       }
    }
    
    $.uri = function(x) {
-      return build($._uri(x));
-      
+      return build(parse(x));      
    } 
 })(jQuery);
 
