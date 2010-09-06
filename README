@@ -103,7 +103,7 @@
    - defaults(object) 
       Returns a new instance, where properties of the parameter will provide 
       new name,value mapping for the "query" part, unless a similarly named
-      mapping is parameter is already defined. The receiving object is unchanged.
+      parameter is already defined. The receiving object is unchanged.
       
       Example:       
           var uri = $.uri("http://api.jquery.com?a=1&b=2");
