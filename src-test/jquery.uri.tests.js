@@ -1,5 +1,17 @@
 JqueryUriTests = TestCase("jquery.uri.tests");
 
+
+JqueryUriTests.prototype.testCloneIsNotDefined = function() {
+   try {
+      $.uri("protocol://domain").clone()
+   }
+   catch(e) {
+      return;
+   }
+    
+   fail("clone() should not be defined");
+};
+
 JqueryUriTests.prototype.testProtocolGet = function() {
    assertEquals("protocol", 
       $.uri("protocol://domain").at("protocol"));
@@ -50,12 +62,28 @@ JqueryUriTests.prototype.testQueryGet = function() {
       $.uri("?first=one&second=two").at("query").first);
 };
 
-JqueryUriTests.prototype.testQueryIsDefensiveGetter = function() {
+JqueryUriTests.prototype.testQuerySet = function() {
+   var uri = $.uri("?first=one&second=two").at("query", { second: 2 });
+   assertEquals(2, uri.at("query").second);
+};
+
+JqueryUriTests.prototype.testQuerySetDoesNotChangeExistingMappings = function() {
+   var uri = $.uri("?first=one&second=two").at("query", { second: 2 });
+   assertEquals('one', uri.at("query").first);
+};
+
+JqueryUriTests.prototype.testQueryReset = function() {
+   var uri = $.uri("?first=one&second=two").resetQuery();
+   assertEquals(null, uri.at("query").second);
+};
+
+JqueryUriTests.prototype.testQueryGetIsDefensive = function() {
 
 	var uri = $.uri("?first=one&second=two");
 	uri.at("query").first = "100";
-   	assertEquals("one", uri.at("query").first);
+	assertEquals("one", uri.at("query").first);
 };
+
 
 JqueryUriTests.prototype.testFragmentGet = function() {
    assertEquals("there", $.uri("protocol://domain#there").at("fragment"));
@@ -71,6 +99,26 @@ JqueryUriTests.prototype.testAtCanSetMultiplePartsViaOptions = function() {
    var mutated = orig.at({ fragment: "new.fragment", port: "9009" });
    assertEquals("new.fragment", mutated.at("fragment"));
    assertEquals("9009", mutated.at("port"));
+};
+
+JqueryUriTests.prototype.testAtWithOptionsCanResetQuery = function() {
+   var orig = $.uri("protocol://domain");
+   var mutated = orig.at({query: {}});
+   assertEquals(undefined, mutated.at("query").a);
+}
+   
+JqueryUriTests.prototype.testAtWithOptionsCanSetQuery = function() {
+   var orig = $.uri("protocol://domain?a=1");
+   var mutated = orig.at({query: { a: 100, b: 200 }});
+   assertEquals(100, mutated.at("query").a);
+   assertEquals(200, mutated.at("query").b);
+};
+
+JqueryUriTests.prototype.testDefaultQuery = function() {
+   var orig = $.uri("protocol://domain?a=1");
+   var mutated = orig.defaults({ a: 100, b: 200 });
+   assertEquals(1, mutated.at("query").a);
+   assertEquals(200, mutated.at("query").b);
 };
 
 JqueryUriTests.prototype.testAtWithOptionsHasNoSideEffects = function() {

@@ -28,43 +28,112 @@ THE SOFTWARE.
    
    Typical usage example:
       var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
-      uri.params.format = "xml";
-      window.location.replace(uri.toString()); // Will forward the browser to "http://api.jquery.com?format=xml"
+      window.location.replace(uri.at({path: "main/index.html", "query": { format: "xml" }}); 
+         // Will forward the browser to "http://api.jquery.com/main/index.html?format=xml"
 
    Parameters: uriString - Input string
-   Returnss: an object, containing the following properties and methods:
+   Returns: an immutable object, containing the following properties and methods:
      
-   - protocol : String
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then protocol is 'http'
-            
-   - domain : String
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then domain is 'api.jquery.com'
-            
-   - port : String
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then port is '8080'
-            
-   - path : String
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then path is 'category/core'
-            
-   - params : Object
-      The parameters specified at the URL as a map (parameter name -> parameter value). Names and values are decoded
-      via decodeURIComponent().
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json'  then params == { "format": "json" }
+   - at: function(partString) 
+       Returns the value of the URI part specified URI. partString can be one 
+       of the following strings: "protocol", "domain", "port", "path", "query". 
+       Any other value will yield an exception. 
+       
+       The "query" part returns an object that maps parameter names to their values,
+       as specified by at the query part of the URI. Both names and values are 
+       decoded via decodeURIComponent().
+      
+       Example:       
+         var uri = $.uri('http://jquery.com:8080/main/index.html?format=json#top');
+         assert uri.at('protocol') == 'http'
+         assert uri.at('domain') == 'jquery.com'
+         assert uri.at('port') == '8080'
+         assert uri.at('path') == 'main/index.html'
+         assert uri.at('query') == { 'format': 'json' }
+         assert uri.at('fragment') == 'top'
+          
+   - at: function(partString, value)
+      Returns a new instance, similar to this one, except that the specified URI 
+      part is now set to value. The receiving object is unchanged. partString can 
+      be one of the following strings: "protocol", "domain", "port", "path", 
+      "query". Any other value will yield an exception. 
+        
+      Example:       
+        var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
+        uri = uri.at('port', '2020').at('path', 'welcome.html');
+        assert uri.at('port') == '2020'
+        assert uri.at('path') == 'welcome.html'
+       
+      if part == "query" then value should be an object. Properties of these object
+      will provide new name,value mapping for the "query" part at the returned object.
+      A new mapping will override an existing mapping (with the same name). Existing
+      mapping that were not overridden will be available in the new instance.
 
-   - fragment : String
-      If originating URL is 'http://api.jquery.com:8080/category/core?format=json#sec3'  then fragment is 'sec3'
-         
+      Example:       
+         var uri = $.uri('http://api.jquery.com?a=1&b=2');
+         uri = uri.at('query', { b:200, c:300 });
+         assert uri.at('query').a == 1;
+         assert uri.at('query').b == 200;
+         assert uri.at('query').c == 300;
+
+   - at: function(object)
+      Returns a new instance, similar to this one, except that all name,value 
+      mappings specified by the parameter are applied the new instance 
+      in a manner similar to at(name,value).  The receiving object is unchanged.
+       
+      Example:       
+          var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
+          uri = uri.at({ port: '2020', path: 'welcome.html' });
+          assert uri.at('port') == '2020'
+          assert uri.at('path') == 'welcome.html'
+       
+      If object.query is defined, then the query part of the result is the same
+      as if .at("query", object.query) is called.
+
+      Example:       
+          var uri = $.uri('http://api.jquery.com?a=1&b=2');
+          uri = uri.at({ query: { b:200, c:300 }});
+          assert uri.at('query').a == 1;
+          assert uri.at('query').b == 200;
+          assert uri.at('query').c == 300;
+
    - toString(compareFunction)
       Return a well-formed URL representing this object.
       Unspecified components (e.g, if this.port == '') do not appear at the result.
-      Caller can pass a compareFunction to affect the order of the query part at the result ('?p1=v1&p2=v2'). This function takes 
-      two arguments, a and b, each of which is an object of the form { key: k, value: v } representing the name and value of a param from this.params.
-      the function should return -1 if a should appear before b, +1 if a should appear after b, or 0 otherwise.
-         
-   - clone() 
-      Return a new instance identical to this. All fields in the new instance have the same values as in this, 
-      except for params which points at a fresh map, populated with the exact key,value mappings as in this.params.
-      This allows client code to synthesize a new URL from an existing URL without affecting the existing one.
+      Caller can pass a compareFunction to affect the order of the query part at the 
+      result.
+      
+      parameter: compareFunction 
+         A function taking two arguments, a and b, each of which 
+         is an object of the form { key: k, value: v } representing the name 
+         and value of a parameter (of the query part).  
+
+         Returns 
+            -1 if a should appear before b, 
+            +1 if a should appear after b, 
+            or 0 otherwise.
+            
+   - resetQuery() 
+      Returns a new instance, similar to this one, except that its query part 
+      is empty. The receiving object is unchanged.
+            
+      Example:       
+          var uri = $.uri('http://api.jquery.com?a=1&b=2');
+          assert uri.resetQuery().at('query') == {}
+          
+   - defaults(object) 
+      Returns a new instance, where properties of the parameter will provide 
+      new name,value mapping for the "query" part, unless a similarly named
+      mapping is parameter is already defined. The receiving object is unchanged.
+      
+      Example:       
+          var uri = $.uri('http://api.jquery.com?a=1&b=2');
+          uri = uri.at({ query: { b:200, c:300 }});
+          assert uri.at('query').a == 1;
+          assert uri.at('query').b == 2;
+          assert uri.at('query').c == 300;
+       
+                
 */
 (function ($) {
    $._uri = function(line) {
@@ -177,21 +246,32 @@ THE SOFTWARE.
       };         
    }
    
+   function isQuery(s) {
+      return s == "query";
+   }
+   
    function set(obj, part, value) {
       checkLegalPart(part);
       var temp = obj.clone();
-      temp[part] = value;
+      if(isQuery(part)) 
+         $.extend(temp.params, value);
+      else
+         temp[part] = value;
+         
       return build(temp);
    }
    
    function setOptions(obj, options) {
-      var res = obj;
+      var res = obj.clone();     
       $.each(options, function(key, value) {
-         res = res.at(key, value);
+         if(isQuery(key))
+            $.extend(res.params, value);
+         else         
+            res[key] = value;
          return true;
       });
       
-      return res;     
+      return build(res);     
    }
 
    
@@ -203,25 +283,37 @@ THE SOFTWARE.
    
    function get(obj, part) {
       checkLegalPart(part);               
-      if(part == "query")
+      if(isQuery(part))
          return $.extend({}, obj.params);
       
       return obj[part] 
    }
    
    function build(xUri) {
-      xUri.at = function(part, value) {
+      return {
+         at: function(part, value) {
       
-         if(arguments.length == 2) 
-            return set(xUri, part, value);
-         
-         if($.isPlainObject(part)) 
-            return setOptions(xUri, part);
-         
-         return get(xUri, part);
+            if(arguments.length == 2) 
+               return set(xUri, part, value);
+            
+            if($.isPlainObject(part)) 
+               return setOptions(xUri, part);
+            
+            return get(xUri, part);
+         },
+      
+         resetQuery: function() {
+            var temp = xUri.clone();
+            temp.params = {};
+            return build(temp);
+         },
+      
+         defaults: function(options) {
+            var temp = xUri.clone();
+            temp.params = $.extend({}, options, temp.params);
+            return build(temp);
+         }
       }
-      
-      return xUri;     
    }
    
    $.uri = function(x) {
