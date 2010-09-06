@@ -1,8 +1,51 @@
 JqueryUriTests = TestCase("jquery.uri.tests");
 
+
 JqueryUriTests.prototype.testDomainDoesNotIncludeProtocol = function() {
    assertEquals("only.the.domain", $.uri("protocol://only.the.domain").domain);
 };
+
+JqueryUriTests.prototype.testProtocolImmutable = function() {
+   assertEquals("protocol", $.uri_("protocol://domain").at("protocol"));
+};
+
+JqueryUriTests.prototype.testDomainDoesNotIncludeProtocolImmutable = function() {
+   assertEquals("only.the.domain", 
+      $.uri_("protocol://only.the.domain").at("domain"));
+};
+
+JqueryUriTests.prototype.testPortImmutable = function() {
+   assertEquals("2020", $.uri_("protocol://domain:2020").at("port"));
+};
+
+JqueryUriTests.prototype.testPathImmutable = function() {
+   assertEquals("this/is/the/path", 
+      $.uri_("protocol://domain/this/is/the/path").at("path"));
+};
+
+JqueryUriTests.prototype.testFragmentImmutable = function() {
+   assertEquals("there", $.uri_("protocol://domain#there").at("fragment"));
+};
+
+
+JqueryUriTests.prototype.testRejectsUnknownPartImmutable = function() {
+   var shouldComplainAbout = function(part) {
+      try {
+         $.uri_("").at(part);
+      }
+      catch(e) {
+         return;
+      }
+      fail(part + " was accepted");   
+   }
+   
+   shouldComplainAbout("protocol_");
+   shouldComplainAbout("domain_");
+   shouldComplainAbout("port_");
+   shouldComplainAbout("_path");
+   shouldComplainAbout("_fragment");   
+};
+
 
 JqueryUriTests.prototype.testSingleParam = function() {
    assertEquals("b", $.uri("www.yahoo.com?a=b").params["a"]);

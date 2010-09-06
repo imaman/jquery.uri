@@ -175,6 +175,20 @@ THE SOFTWARE.
             return result;
          }
       };         
-   }   
+   }
+   
+   $.uri_ = function(x) {
+      var result = $.uri(x);
+      result.at = function(part) {
+         var arr = $.grep(["domain", "port", "path", "protocol", "fragment"], function(s) {
+            return part == s; 
+         });
+         
+         if(arr.length == 0)
+            throw "Unknown URI part '" + part + "'"; 
+         return result[part] 
+      }
+      return result;   	 
+   } 
 })(jQuery);
 
