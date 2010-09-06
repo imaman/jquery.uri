@@ -68,8 +68,8 @@ THE SOFTWARE.
          assert uri.at('port') == '2020'
          assert uri.at('path') == 'welcome.html'
        
-      if part == "query" then value should be an object. Properties of these object
-      will provide new name,value mapping for the "query" part at the returned object.
+      if part == "query" then value should be an object. Properties of this object
+      provide new name,value mapping for the "query" part at the returned object.
       A new mapping will override an existing mapping (with the same name). Existing
       mapping that were not overridden will be available in the new instance.
 
@@ -131,12 +131,11 @@ THE SOFTWARE.
           
    - defaults(anObject) 
       Provide defaults for query parameters.
-      Returns a new instance similar to this one except for new name,value mappings 
-      of query parameters that are specified by anObject. Such a mapping 
-      will be applied only if no existing parameter is already defined.
+      Properties of anObject provide new name,value mappings for the query part
+      of the returned object. A mapping will be ignored if an existing parameter 
+      (with the same name) is already defined. 
       The receiving object is unchanged.
-        
-      
+
       Example:       
          var uri = $.uri('http://api.jquery.com?a=1&b=2');
          uri = uri.at({ query: { b:200, c:300 }});
