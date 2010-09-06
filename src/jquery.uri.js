@@ -27,17 +27,20 @@ THE SOFTWARE.
    jquery.uri(uriString) - A JQuery plugin for inspecting and manipulating a URI.
    
    Typical usage example:
-      var uri = $.uri(window.location.href); // Assuming current url is "http://api.jquery.com"
-      window.location.replace(uri.at({path: "main/index.html", "query": { format: "xml" }}); 
+      var uri = $.uri(window.location.href); 
+      // Assuming current url is "http://api.jquery.com"
+      
+      var newUri = uri.at({path: "main/index.html", query: { format: "xml" }};
+      window.location.replace(newUri); 
          // Will forward the browser to "http://api.jquery.com/main/index.html?format=xml"
 
    Parameters: uriString - Input string
    Returns: an immutable object, containing the following properties and methods:
      
    - at: function(partString) 
-       Returns the value of the URI part specified URI. partString can be one 
+       Returns the value of the specified URI part. partString can be one 
        of the following strings: "protocol", "domain", "port", "path", "query". 
-       Any other value will yield an exception. 
+       Any other value yields an exception. 
        
        The "query" part returns an object that maps parameter names to their values,
        as specified by at the query part of the URI. Both names and values are 
@@ -56,7 +59,7 @@ THE SOFTWARE.
       Returns a new instance, similar to this one, except that the specified URI 
       part is now set to value. The receiving object is unchanged. partString can 
       be one of the following strings: "protocol", "domain", "port", "path", 
-      "query". Any other value will yield an exception. 
+      "query". Any other value will yields an exception. 
         
       Example:       
         var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
@@ -100,6 +103,8 @@ THE SOFTWARE.
    - toString(compareFunction)
       Return a well-formed URL representing this object.
       Unspecified components (e.g, if this.port == '') do not appear at the result.
+      names and value of parameters at the query part are encoded via encodeURIComponent().
+      
       Caller can pass a compareFunction to affect the order of the query part at the 
       result.
       
@@ -127,7 +132,7 @@ THE SOFTWARE.
       mapping is parameter is already defined. The receiving object is unchanged.
       
       Example:       
-          var uri = $.uri('http://api.jquery.com?a=1&b=2');
+          var uri = $.uri("http://api.jquery.com?a=1&b=2");
           uri = uri.at({ query: { b:200, c:300 }});
           assert uri.at('query').a == 1;
           assert uri.at('query').b == 2;
