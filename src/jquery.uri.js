@@ -35,16 +35,18 @@ THE SOFTWARE.
          // Will forward the browser to "http://api.jquery.com/main/index.html?format=xml"
 
    Parameters: uriString - Input string
-   Returns: an immutable object, providing the following methods:
+   Returns: An immutable object, providing the following methods:
      
-   - at: function(partString) 
-      Returns the value of the specified URI part. partString can be any one 
+   - at: function(part) 
+      Returns the value of the specified URI part. part can be any one 
       of the following strings: "protocol", "domain", "port", "path", "query", 
       "fragment". Any other value yields an exception. 
        
       The "query" part returns an object that maps parameter names to their values,
       as specified by at the query part of the URI. All names and values are 
-      decoded via decodeURIComponent().
+      decoded via decodeURIComponent(). A "defensive getter" semantics is used so 
+      the returned object can be subsequently mutated by the caller without 
+      affecting this.             
 
    Example:       
       var uri = $.uri('http://jquery.com:8080/main/index.html?format=json#top');
@@ -55,10 +57,10 @@ THE SOFTWARE.
       assert uri.at('query') == { 'format': 'json' }
       assert uri.at('fragment') == 'top'
           
-   - at: function(partString, value)
+   - at: function(part, value)
       Set the value of a URI part.
       Returns a new instance similar to this one except that the specified URI 
-      part is now set to value. The receiving object is unchanged. partString can 
+      part is now set to value. The receiving object is unchanged. part can 
       be any one of the following strings: "protocol", "domain", "port", "path", 
       "query", "fragment". Any other value yields an exception. 
         
@@ -71,7 +73,9 @@ THE SOFTWARE.
       if part == "query" then value should be an object. Properties of this object
       provide new name,value mapping for the "query" part at the returned object.
       A new mapping will override an existing mapping (with the same name). Existing
-      mapping that were not overridden will be available in the new instance.
+      mapping that were not overridden will be available in the new instance. A 
+      "defensive setter" semantics is used so value can be subsequently mutated 
+      by the caller without affecting this. 
 
       Example:       
          var uri = $.uri('http://api.jquery.com?a=1&b=2');
@@ -85,6 +89,9 @@ THE SOFTWARE.
       Returns a new instance similar to this one except that all name,value 
       mappings specified by the parameter are applied the new instance 
       in a manner similar to at(name,value).  The receiving object is unchanged.
+      
+      A "defensive setter" semantics is used so object can be subsequently mutated 
+      by the caller without affecting this.       
        
       Example:       
           var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
@@ -102,13 +109,14 @@ THE SOFTWARE.
          assert uri.at('query').b == 200;
          assert uri.at('query').c == 300;
 
-   - toString(compareFunction)
+   - toString([compareFunction])
       Return a well-formed URL representing this object.
       Unspecified components (e.g., if .at('port') == '') do not appear at the result.
       Names and value of parameters at the query part are encoded via encodeURIComponent().
       
-      Caller can pass a optional compareFunction to affect the order of parameters 
-      at the query part of the result. In compareFunction is not specified, order is undefined.
+      Caller can pass an optional compareFunction to affect the order of parameters 
+      at the query part of the result. If compareFunction is not specified, order is 
+      undefined.
       
       parameter: compareFunction 
          A function taking two arguments, a and b, each of which 
@@ -142,7 +150,6 @@ THE SOFTWARE.
          assert uri.at('query').a == 1;
          assert uri.at('query').b == 2;
          assert uri.at('query').c == 300;
-       
                 
 */
 (function ($) {

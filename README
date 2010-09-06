@@ -9,7 +9,7 @@
          // Will forward the browser to "http://api.jquery.com/main/index.html?format=xml"
 
    Parameters: uriString - Input string
-   Returns: an immutable object, providing the following methods:
+   Returns: An immutable object, providing the following methods:
      
    - at: function(part) 
       Returns the value of the specified URI part. part can be any one 
@@ -18,7 +18,9 @@
        
       The "query" part returns an object that maps parameter names to their values,
       as specified by at the query part of the URI. All names and values are 
-      decoded via decodeURIComponent().
+      decoded via decodeURIComponent(). A "defensive getter" semantics is used so 
+      the returned object can be subsequently mutated by the caller without 
+      affecting this.             
 
    Example:       
       var uri = $.uri('http://jquery.com:8080/main/index.html?format=json#top');
@@ -45,7 +47,9 @@
       if part == "query" then value should be an object. Properties of this object
       provide new name,value mapping for the "query" part at the returned object.
       A new mapping will override an existing mapping (with the same name). Existing
-      mapping that were not overridden will be available in the new instance.
+      mapping that were not overridden will be available in the new instance. A 
+      "defensive setter" semantics is used so value can be subsequently mutated 
+      by the caller without affecting this. 
 
       Example:       
          var uri = $.uri('http://api.jquery.com?a=1&b=2');
@@ -59,6 +63,9 @@
       Returns a new instance similar to this one except that all name,value 
       mappings specified by the parameter are applied the new instance 
       in a manner similar to at(name,value).  The receiving object is unchanged.
+      
+      A "defensive setter" semantics is used so object can be subsequently mutated 
+      by the caller without affecting this.       
        
       Example:       
           var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
@@ -117,4 +124,3 @@
          assert uri.at('query').a == 1;
          assert uri.at('query').b == 2;
          assert uri.at('query').c == 300;
-       
