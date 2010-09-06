@@ -38,7 +38,7 @@ THE SOFTWARE.
    Returns: an immutable object, providing the following methods:
      
    - at: function(partString) 
-      Returns the value of the specified URI part. partString can be one 
+      Returns the value of the specified URI part. partString can be any one 
       of the following strings: "protocol", "domain", "port", "path", "query", 
       "fragment". Any other value yields an exception. 
        
@@ -59,7 +59,7 @@ THE SOFTWARE.
       Set the value of a URI part.
       Returns a new instance similar to this one except that the specified URI 
       part is now set to value. The receiving object is unchanged. partString can 
-      be one of the following strings: "protocol", "domain", "port", "path", 
+      be any one of the following strings: "protocol", "domain", "port", "path", 
       "query", "fragment". Any other value yields an exception. 
         
       Example:       
@@ -104,11 +104,11 @@ THE SOFTWARE.
 
    - toString(compareFunction)
       Return a well-formed URL representing this object.
-      Unspecified components (e.g, if this.port == '') do not appear at the result.
+      Unspecified components (e.g., if .at('port') == '') do not appear at the result.
       Names and value of parameters at the query part are encoded via encodeURIComponent().
       
-      Caller can pass a compareFunction to affect the order of the query part at the 
-      result.
+      Caller can pass a optional compareFunction to affect the order of parameters 
+      at the query part of the result. In compareFunction is not specified, order is undefined.
       
       parameter: compareFunction 
          A function taking two arguments, a and b, each of which 
