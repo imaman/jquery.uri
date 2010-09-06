@@ -118,7 +118,7 @@ THE SOFTWARE.
          Returns 
             -1 if a should appear before b, 
             +1 if a should appear after b, 
-            or 0 otherwise.
+            0 otherwise.
             
    - resetQuery() 
       Empty the query. 
