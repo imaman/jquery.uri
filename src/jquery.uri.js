@@ -43,7 +43,7 @@ THE SOFTWARE.
       Any other value yields an exception. 
        
       The "query" part returns an object that maps parameter names to their values,
-      as specified by at the query part of the URI. Both names and values are 
+      as specified by at the query part of the URI. All names and values are 
       decoded via decodeURIComponent().
 
    Example:       
@@ -59,7 +59,7 @@ THE SOFTWARE.
       Returns a new instance, similar to this one, except that the specified URI 
       part is now set to value. The receiving object is unchanged. partString can 
       be one of the following strings: "protocol", "domain", "port", "path", 
-      "query". Any other value will yields an exception. 
+      "query". Any other value yields an exception. 
         
       Example:       
          var uri = $.uri('http://api.jquery.com:8080/main/index.html?format=json');
@@ -103,7 +103,7 @@ THE SOFTWARE.
    - toString(compareFunction)
       Return a well-formed URL representing this object.
       Unspecified components (e.g, if this.port == '') do not appear at the result.
-      names and value of parameters at the query part are encoded via encodeURIComponent().
+      Names and value of parameters at the query part are encoded via encodeURIComponent().
       
       Caller can pass a compareFunction to affect the order of the query part at the 
       result.
