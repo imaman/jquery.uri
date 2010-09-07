@@ -119,8 +119,8 @@ THE SOFTWARE.
       undefined.
       
       parameter: compareFunction 
-         A function taking two arguments, a and b, each of which is an object of 
-         with two properties name,value representing a query parameter. 
+         A function taking two arguments, a and b, each of which is an object  
+         with two properties - name, value - representing a query parameter. 
 
          Returns 
             -1 if a should appear before b, 
