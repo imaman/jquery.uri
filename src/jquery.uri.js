@@ -100,7 +100,7 @@ THE SOFTWARE.
           assert uri.at('path') == 'welcome.html'
        
       If object.query is defined, then the query part of the result is the same
-      as if .at("query", object.query) is called.
+      as if .at("query", object.query) were called.
 
       Example:       
          var uri = $.uri('http://api.jquery.com?a=1&b=2');
@@ -119,9 +119,8 @@ THE SOFTWARE.
       undefined.
       
       parameter: compareFunction 
-         A function taking two arguments, a and b, each of which 
-         is an object of the form { key: k, value: v } representing the name 
-         and value of a parameter (of the query part).  
+         A function taking two arguments, a and b, each of which is an object of 
+         with two properties name,value representing a query parameter. 
 
          Returns 
             -1 if a should appear before b, 
@@ -239,7 +238,7 @@ THE SOFTWARE.
       
             var arr = [];
             $.each(this.params, function(k, v) {
-               var x = { key: k, value: v };
+               var x = { name: k, value: v };
                arr.push(x);
             });
             
@@ -249,7 +248,7 @@ THE SOFTWARE.
             var q = "";
             $.each(arr, function(index, kv) {
                q += q.length > 0 ? "&" : "";
-               q += encodeURIComponent(kv.key) + "=" + encodeURIComponent(kv.value);
+               q += encodeURIComponent(kv.name) + "=" + encodeURIComponent(kv.value);
             });
             
             return surround("", this.protocol, "://") + surround("", this.domain) 

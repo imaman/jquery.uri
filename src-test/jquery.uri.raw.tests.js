@@ -102,7 +102,7 @@ JqueryUrRawiTests.prototype.testToStringEncodesParameterNames = function() {
 JqueryUrRawiTests.prototype.testToStringWithCustomOrderBasedOnKeys = function() {
    var loc = $.uri("?2=b&3=c&1=a")._raw();
    assertEquals("?1=a&2=b&3=c", loc.toString(function(lhs, rhs) {
-      return lhs.key - rhs.key;      
+      return lhs.name - rhs.name;      
    }));
 };
 
