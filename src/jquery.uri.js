@@ -38,7 +38,7 @@ THE SOFTWARE.
    Returns: An immutable object, providing the following methods:
      
    - at: function(part) 
-      Returns the value of the specified URI part. part can be any one 
+      Return the value of the specified URI part. part can be any one 
       of the following strings: "protocol", "domain", "port", "path", "query", 
       "fragment". Any other value yields an exception. 
        
@@ -129,7 +129,7 @@ THE SOFTWARE.
             
    - resetQuery() 
       Empty the query. 
-      Returns a new instance similar to this one except that its query part 
+      Return a new instance similar to this one except that its query part 
       is empty. The receiving object is unchanged.
             
       Example:       
