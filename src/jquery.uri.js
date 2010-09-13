@@ -127,14 +127,16 @@ THE SOFTWARE.
             +1 if a should appear after b, 
             0 otherwise.
             
-   - resetQuery() 
-      Empty the query. 
-      Return a new instance similar to this one except that its query part 
-      is empty. The receiving object is unchanged.
+   - retain(name1, name2, ...) 
+      Keep the specified query parmas, discard all others.
+      Return a new instance similar to this one except that its query 
+      part contains only the params whose names are specified by name1, name2, 
+      etc. All other params are discarded from the result. The receiving object 
+      is unchanged.
             
       Example:       
-          var uri = $.uri('http://api.jquery.com?a=1&b=2');
-          assert uri.resetQuery().at('query') == {}
+          var uri = $.uri('http://api.jquery.com?a=1&b=2&c=3&d=4');
+          assert uri.retain('b', 'c').at('query') == { b:2, c: 3 }
           
    - defaults(anObject) 
       Provide defaults for query parameters.
@@ -151,6 +153,8 @@ THE SOFTWARE.
          assert uri.at('query').c == 300;
                 
 */
+
+
 (function ($) {
    
    function parse(line) {
@@ -218,49 +222,47 @@ THE SOFTWARE.
       var domainPort = splitAround(domainPortPath.domainPort, "domain", ":", "port");
       domainPortPath.path = domainPortPath.path.replace(/\/+$/, "");
       
-
       var surround = function(left, s, right) {
          right = right || "";
          return s == null || s.length == 0 ? "" : left + s + right;
       }
+
+      function Raw() { };
       
-      return { 
+      Raw.prototype.toString = function(compareFunction) {     
+         var arr = [];
+         $.each(this.params, function(k, v) {
+            var x = { name: k, value: v };
+            arr.push(x);
+         });
          
-         protocol : protocolDomainPortPath.protocol,          
+         if(compareFunction)
+            arr.sort(compareFunction);
+         
+         var q = "";
+         $.each(arr, function(index, kv) {
+            q += q.length > 0 ? "&" : "";
+            q += encodeURIComponent(kv.name) + "=" + encodeURIComponent(kv.value);
+         });
+         
+         return surround("", this.protocol, "://") + surround("", this.domain) 
+            + surround(":", this.port) + surround("/", this.path) + surround("?", q);
+      };
+      
+      Raw.prototype.clone = function() {     
+         var result = $.extend(new Raw(), this);
+         result.params = $.extend({}, this.params);
+         return result;
+      };
+                       
+      return $.extend(new Raw(), {
+         protocol : protocolDomainPortPath.protocol,
          domain : domainPort.domain,      
          port : domainPort.port,         
          path : domainPortPath.path,         
          params: extractParams(queryFragment.query), 
-         fragment : queryFragment.fragment,
-         
-         toString: function(compareFunction) {
-
-      
-            var arr = [];
-            $.each(this.params, function(k, v) {
-               var x = { name: k, value: v };
-               arr.push(x);
-            });
-            
-            if(compareFunction)
-               arr.sort(compareFunction);
-            
-            var q = "";
-            $.each(arr, function(index, kv) {
-               q += q.length > 0 ? "&" : "";
-               q += encodeURIComponent(kv.name) + "=" + encodeURIComponent(kv.value);
-            });
-            
-            return surround("", this.protocol, "://") + surround("", this.domain) 
-               + surround(":", this.port) + surround("/", this.path) + surround("?", q);
-         },         
-         
-         clone: function() {
-            var result = $.extend({}, this);
-            result.params = $.extend({}, this.params);
-            return result;
-         }
-      };         
+         fragment : queryFragment.fragment         
+      });
    }
    
    function isQuery(s) {
@@ -319,9 +321,14 @@ THE SOFTWARE.
             return get(xUri, part);
          },
       
-         resetQuery: function() {
+         retain: function() {
             var temp = xUri.clone();
             temp.params = {};
+            for(var i = 0; i < arguments.length; ++i) {
+               var k = arguments[i];
+               temp.params[k] = xUri.params[k];
+            }
+            
             return build(temp);
          },
       

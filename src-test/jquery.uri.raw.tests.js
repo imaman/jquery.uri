@@ -116,16 +116,20 @@ JqueryUrRawiTests.prototype.testToStringWithCustomOrderBasedOnValues = function(
 
 JqueryUrRawiTests.prototype.testClone = function() {
    var src = $.uri("protocol://domain?1=a&2=b")._raw();
-   var copy = src.clone();
-   
+   var copy = src.clone();   
    copy.params[2] = 'BB';
    copy.params[3] = 'c';
    copy.port = 100;
-      
+
    assertEquals("protocol://domain?1=a&2=b", 
-      src.toString(function(lhs, rhs) { return lhs.key - rhs.key }));
-      
+      src.toString(function(lhs, rhs) {
+         return parseInt(lhs.name) - parseInt(rhs.name); 
+      }));
+
+   
    assertEquals("protocol://domain:100?1=a&2=BB&3=c", 
-      copy.toString(function(lhs, rhs) { return lhs.key - rhs.key }));
+      copy.toString(function(lhs, rhs) { 
+         return parseInt(lhs.name) - parseInt(rhs.name) 
+      }));
 };
 

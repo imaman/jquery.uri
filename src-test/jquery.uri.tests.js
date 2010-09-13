@@ -72,9 +72,22 @@ JqueryUriTests.prototype.testQuerySetDoesNotChangeExistingMappings = function() 
    assertEquals('one', uri.at("query").first);
 };
 
-JqueryUriTests.prototype.testQueryReset = function() {
-   var uri = $.uri("?first=one&second=two").resetQuery();
+JqueryUriTests.prototype.testRetain = function() {
+   var uri = $.uri("?first=one&second=two").retain();
    assertEquals(null, uri.at("query").second);
+};
+
+JqueryUriTests.prototype.testRetainKeepsASingleParam = function() {
+   var uri = $.uri("?first=one&second=two").retain('second');
+   assertEquals(null, uri.at("query").first);
+   assertEquals('two', uri.at("query").second);
+};
+
+JqueryUriTests.prototype.testRetainKeepsSeveralParams = function() {
+   var uri = $.uri("?first=one&second=two&third=three").retain('third', 'first');
+   assertEquals('one', uri.at("query").first);
+   assertEquals(null, uri.at("query").second);
+   assertEquals('three', uri.at("query").third);
 };
 
 JqueryUriTests.prototype.testQueryGetIsDefensive = function() {
