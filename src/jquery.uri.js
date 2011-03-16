@@ -340,6 +340,10 @@ THE SOFTWARE.
          
          _raw: function() {
             return xUri;
+         },
+         
+         toString: function() {
+           return xUri.toString();
          }
       }
    }
