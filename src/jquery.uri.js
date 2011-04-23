@@ -342,8 +342,8 @@ THE SOFTWARE.
             return xUri;
          },
          
-         toString: function() {
-           return xUri.toString();
+         toString: function(compareFunction) {
+           return xUri.toString(compareFunction);
          }
       }
    }
