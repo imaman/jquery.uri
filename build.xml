@@ -1,0 +1,62 @@
+<project name="jquery.uri" default="test" basedir=".">
+  <description>A URI/URL manipulation JQuery plugin</description>
+
+  <!-- Copy content of build.properites only if build-local.properties does not exist -->
+  <copy file="build.properties" tofile="build-local.properties"/>        
+  <property file="build-local.properties"/>
+
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="src-test" location="src-test"/>
+  <property name="tools"  location="tools"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+
+  <target name="init">
+    <tstamp/>
+    <!--
+    <mkdir dir="${build}"/>
+    -->
+  </target>
+
+  <target name="setup" depends="init"
+        description="Start the browsers" >
+    <java jar="${tools}/JsTestDriver.jar"
+       spawn="true"
+       fork="true">
+     <arg value="--port"/>
+     <arg value="9876"/>
+     <arg value="--browser"/>
+     <arg value="${chrome.path}"/>
+    </java>
+  </target>
+
+  <target name="test" depends="init"
+        description="Run unit tests" >
+    <java jar="${tools}/JsTestDriver.jar"
+       fork="true"
+       failonerror="true">
+     <arg value="--tests"/>
+     <arg value="all"/>
+    </java>
+  </target>
+
+  <!--
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <javac srcdir="${src}" destdir="${build}"/>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <mkdir dir="${dist}/lib"/>
+    <jar jarfile="${dist}/lib/MyProject-${DSTAMP}.jar" basedir="${build}"/>
+  </target>
+  -->
+
+  <target name="clean"
+        description="clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
